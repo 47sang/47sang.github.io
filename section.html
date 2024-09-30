@@ -24,7 +24,7 @@
         useDirtyRect: true
     });
     var app = {};
-    var API_PATH = 'https://app.thzyy.com:688/aCloudMap/info/all';
+    var API_PATH = 'https://app.thzyy.com:688/aCloudMap/info/section';
     // var API_PATH = './data.json';
     var option;
 
@@ -115,16 +115,18 @@
                     },
                     tooltip: {
                         formatter: function (info) {
-                            let value = info.value;
                             let data = info.data;
+                            //总市值
                             let amount = data.total;
                             amount = isValidNumber(amount)
                                 ? '￥' + (amount / 100000000).toFixed(2) + '亿'
                                 : '-';
-                            let price = data.price;
+                            //涨跌额
+                            let price = data.turnover;
                             price = isValidNumber(price)
-                                ? '￥' + echarts.format.addCommas(price)
+                                ? '￥' + (price / 100000000).toFixed(2) + '亿'
                                 : '-';
+                            //涨跌幅%
                             let change = data.increase;
                             change = isValidNumber(change) ? change.toFixed(2) + '%' : '-';
                             return [
@@ -132,8 +134,7 @@
                                 echarts.format.encodeHTML(data.name + "(" + data.code + ")") +
                                 '</div>',
                                 '当前市值: &nbsp;&nbsp;' + amount + '<br>',
-                                // 'Per Household: &nbsp;&nbsp;' + perHousehold + '<br>',
-                                '当前价格: &nbsp;&nbsp;' + price + '<br>',
+                                '涨跌额: &nbsp;&nbsp;' + price + '<br>',
                                 '涨跌幅: &nbsp;&nbsp;' + change
                             ].join('');
                         }
@@ -146,7 +147,9 @@
                             label: {
                                 show: true,
                                 formatter: function (params) {
-                                    return params.data.name + '\n' + params.data.increase + '%'; // 显示名称和值
+                                    let change = params.data.increase;
+                                    change = isValidNumber(change) ? change.toFixed(2) + '%' : '-';
+                                    return params.data.name + '\n' + change; // 显示名称和值
                                 }
                             },
                             animation: false, // 关闭动画
